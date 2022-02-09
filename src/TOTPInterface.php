@@ -33,4 +33,6 @@ interface TOTPInterface extends OTPInterface
     public function getPeriod(): int;
 
     public function getEpoch(): int;
+    
+    public function getExpiration(): int;
 }

@@ -23,6 +23,7 @@ final class TOTP extends OTP implements TOTPInterface
         parent::__construct($secret, $digest, $digits);
         $this->setPeriod($period);
         $this->setEpoch($epoch);
+        $this->setExpiration($epoch);
     }
 
     public static function create(?string $secret = null, int $period = 30, string $digest = 'sha1', int $digits = 6, int $epoch = 0): TOTPInterface
@@ -43,6 +44,19 @@ final class TOTP extends OTP implements TOTPInterface
     private function setEpoch(int $epoch): void
     {
         $this->setParameter('epoch', $epoch);
+    }
+
+    private function setExpiration(): void
+    {   
+        $lastUsedTime = round(microtime(true) * 1000);
+        $period = $this->getPeriod();
+        $expire =  (int) ($period - abs((round(($lastUsedTime / 1000))) % $period));
+        $this->setParameter('expiration', $expire);
+    }
+
+    public function getExpiration():int
+    {
+        return $this->getParameter('expiration');
     }
 
     public function getEpoch(): int
